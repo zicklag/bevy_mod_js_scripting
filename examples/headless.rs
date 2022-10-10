@@ -20,7 +20,7 @@ fn main() {
         .add_plugins(MinimalPlugins)
         .add_plugin(LogPlugin)
         .add_plugin(AssetPlugin)
-        .add_plugin(JsScriptingPlugin)
+        .add_plugin(JsScriptingPlugin::default())
         .add_startup_system(setup)
         .add_js_system("scripts/headless.ts")
         .register_type::<TestComponent>()
