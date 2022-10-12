@@ -103,9 +103,6 @@
         }
     }
 
-    const valueRefFinalizationRegistry = new FinalizationRegistry(ref => {
-        bevyModJsScriptingOpSync("ecs_value_ref_free", ref);
-    });
     const VALUE_REF_GET_INNER = Symbol("value_ref_get_inner");
 
     globalThis.Value = {
@@ -132,9 +129,6 @@
             if (typeof valueRef !== "object" || valueRef === null || valueRef === undefined) {
                 return valueRef;
             }
-
-            const refCopy = { key: valueRef.key, function: valueRef.function };
-            valueRefFinalizationRegistry.register(valueRef, refCopy);
 
             let target = () => { };
             target.valueRef = valueRef;
