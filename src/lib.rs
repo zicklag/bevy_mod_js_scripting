@@ -6,11 +6,11 @@ mod runtime;
 mod transpile;
 
 use asset::JsScriptLoader;
-use bevy::{asset::AssetStage, ecs::system::ExclusiveSystemFn, prelude::*, utils::HashSet};
+use bevy::{asset::AssetStage, ecs::system::ExclusiveSystemFn, prelude::*};
 
-pub use bevy_reflect_fns;
 pub use asset::JsScript;
 pub use bevy_ecs_dynamic;
+pub use bevy_reflect_fns;
 pub use runtime::{
     ops::ecs::types::{
         JsReflectFunctions, JsValueRef, JsValueRefKey, JsValueRefs, ReflectFunctionKey,
@@ -31,7 +31,7 @@ pub struct JsScriptingPlugin {
 }
 
 #[derive(Default, Deref, DerefMut)]
-pub struct ActiveScripts(pub HashSet<Handle<JsScript>>);
+pub struct ActiveScripts(pub indexmap::IndexSet<Handle<JsScript>, bevy::utils::FixedState>);
 
 impl Plugin for JsScriptingPlugin {
     fn build(&self, app: &mut App) {
