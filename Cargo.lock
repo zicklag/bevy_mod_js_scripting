@@ -494,6 +494,7 @@ dependencies = [
  "serde",
  "serde-wasm-bindgen",
  "serde_json",
+ "serde_v8",
  "slotmap",
  "swc_atoms",
  "swc_common",

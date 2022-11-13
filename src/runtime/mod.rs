@@ -33,6 +33,12 @@ pub trait JsRuntimeApi: FromWorld {
     /// Run a script
     fn run_script(&self, handle: &Handle<JsScript>, fn_name: &str, world: &mut World);
 
+    /// Run a JavaScript snippet and get the result.
+    ///
+    /// > **Note:** If you don't need the eval-ed code to have access to the Bevy world, you may
+    /// > pass in a dummy world.
+    fn eval(&self, js: &str, world: &mut World) -> Result<serde_json::Value, String>;
+
     /// Run during an exclusive system executed before [`CoreStage::First`] to allow the engine to
     /// do any pre-frame preparation.
     fn frame_start(&self, world: &mut World) {

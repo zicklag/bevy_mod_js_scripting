@@ -4,6 +4,7 @@ use bevy::{prelude::*, utils::HashMap};
 use deno_core::{
     error::AnyError, v8, Extension, JsRuntime as DenoJsRuntime, OpState, ResourceId, RuntimeOptions,
 };
+use serde::Serialize;
 use type_map::TypeMap;
 
 use super::JsRuntimeApi;
@@ -155,9 +156,7 @@ impl JsRuntimeApi for JsRuntime {
         let JsRuntimeInner { scripts, runtime } = &mut *this;
 
         // Get the script output
-        let script = if let Some(script) = scripts.get(handle) {
-            script
-        } else {
+        let Some(script) = scripts.get(handle) else {
             return;
         };
 
@@ -172,9 +171,7 @@ impl JsRuntimeApi for JsRuntime {
             let output = v8::Local::new(scope, &script.output);
 
             // Make sure that script output was an object
-            let output = if let Ok(value) = v8::Local::<v8::Object>::try_from(output) {
-                value
-            } else {
+            let Ok(output) = v8::Local::<v8::Object>::try_from(output) else {
                 warn!(?script.path, "Script init() did not return an object. Skipping.");
                 return;
             };
@@ -188,17 +185,13 @@ impl JsRuntimeApi for JsRuntime {
             .unwrap();
 
             // Get get the named function from the object
-            let script_fn = if let Some(script_fn) = output.get(scope, fn_name.into()) {
-                script_fn
-            } else {
+            let Some(script_fn) = output.get(scope, fn_name.into()) else {
                 warn!(?script.path, "Getting function named `{}` on script default export failed. Skipping.", fn_name_str);
                 return;
             };
 
             // Make sure the value is a function
-            let script_fn = if let Ok(value) = v8::Local::<v8::Function>::try_from(script_fn) {
-                value
-            } else {
+            let Ok(script_fn) = v8::Local::<v8::Function>::try_from(script_fn) else {
                 // It is valid to not have a function for a script stage so we don't print a warning if
                 // the function isn't found.
                 return;
@@ -206,6 +199,19 @@ impl JsRuntimeApi for JsRuntime {
 
             script_fn.call(scope, output.into(), &[]);
         });
+    }
+
+    fn eval(&self, js: &str, world: &mut World) -> Result<serde_json::Value, String> {
+        let mut this = self.borrow_mut();
+        let JsRuntimeInner { runtime, .. } = &mut *this;
+        with_world(world, runtime, |runtime| {
+            runtime
+                .execute_script("eval", js)
+                .map_err(|e| e.to_string())
+                .and_then(|value| {
+                    serde_json::to_value(serde_v8::Global::from(value)).map_err(|e| e.to_string())
+                })
+        })
     }
 
     fn frame_start(&self, world: &mut World) {
