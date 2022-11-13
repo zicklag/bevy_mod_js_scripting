@@ -16,8 +16,8 @@ indexmap = "1.9.1"
 serde = "1.0"
 serde_json = "1.0"
 
-bevy_ecs_dynamic = { git = "https://github.com/jakobhellermann/bevy_ecs_dynamic" }
-bevy_reflect_fns = { git = "https://github.com/jakobhellermann/bevy_reflect_fns" }
+bevy_ecs_dynamic = { git = "https://github.com/jakobhellermann/bevy_ecs_dynamic", rev = "aa7a051a49bd134cfd8c169542e16526bf2b36b3" }
+bevy_reflect_fns = { git = "https://github.com/jakobhellermann/bevy_reflect_fns", rev = "22e85021851e0cfe27b87e428f6313dd8c26abde" }
 
 swc_common = { version = "0.27.4" }
 swc_ecma_codegen = { version = "0.121.2" }
