@@ -15,12 +15,10 @@ pub use runtime::{
     ops::ecs::types::{
         JsReflectFunctions, JsValueRef, JsValueRefKey, JsValueRefs, ReflectFunctionKey,
     },
-    JsRuntimeConfig, JsRuntimeOp, OpContext, OpMap, ScriptInfo,
+    JsRuntime, JsRuntimeApi, JsRuntimeConfig, JsRuntimeOp, OpContext, OpMap, ScriptInfo,
 };
 pub use serde_json;
 pub use type_map;
-
-use runtime::{JsRuntime, JsRuntimeApi};
 
 #[derive(Default)]
 pub struct JsScriptingPlugin {
